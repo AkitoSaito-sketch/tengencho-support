@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>お知らせリスト</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin: 10px 0;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            transition: background-color 0.3s;
+            cursor: pointer;
+        }
+        li:hover {
+            background-color: #e6e6e6;
+        }
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pagination button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .pagination button:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <h1>お知らせリスト</h1>
+    <ul id="news-list"></ul>
+
+    <div class="pagination">
+        <button id="prev" onclick="changePage(-1)">前へ</button>
+        <span id="page-info"></span>
+        <button id="next" onclick="changePage(1)">次へ</button>
+    </div>
+
+    <script>
+        const apiUrl = "https://script.google.com/macros/s/AKfycbzMfxQ0lM8t4q-TKF98s8LuX4yauTQbX6EYsT3dE-mlC3Uaeob9HarIe7UVKdfxDPDi/exec";
+        let news = [];
+        let itemsPerPage = 5;
+        let currentPage = 1;
+
+        async function fetchNews() {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            news = data.items;
+            itemsPerPage = data.itemsPerPage;
+            renderNews();
+        }
+
+        function renderNews() {
+            const newsList = document.getElementById("news-list");
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const currentNews = news.slice(startIndex, endIndex);
+
+            newsList.innerHTML = "";
+            currentNews.forEach(item => {
+                const li = document.createElement("li");
+                li.textContent = item.title;
+                li.onclick = () => {
+                    window.location.href = item.link;
+                };
+                newsList.appendChild(li);
+            });
+
+            const pageInfo = document.getElementById("page-info");
+            pageInfo.textContent = `ページ ${currentPage} / ${Math.ceil(news.length / itemsPerPage)}`;
+
+            document.getElementById("prev").disabled = currentPage === 1;
+            document.getElementById("next").disabled = currentPage === Math.ceil(news.length / itemsPerPage);
+        }
+
+        function changePage(direction) {
+            currentPage += direction;
+            renderNews();
+        }
+
+        fetchNews();
+    </script>
+</body>
+</html>
