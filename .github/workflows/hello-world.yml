@@ -1,0 +1,16 @@
+name: Hello World Workflow
+
+on:
+  push: # コードがPushされた際にトリガー
+    branches:
+      - main # mainブランチに限定
+
+jobs:
+  say_hello:
+    runs-on: ubuntu-latest # GitHubが提供するUbuntuランナーを使用
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3 # コードをチェックアウト
+
+      - name: Say Hello
+        run: echo "Hello, World!" # シンプルにメッセージを出力
