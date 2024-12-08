@@ -14,3 +14,7 @@ jobs:
 
       - name: Say Hello
         run: echo "Hello, World!" # シンプルにメッセージを出力
+
+      - name: Custom Greeting
+        run: echo "Hello, ${{ github.actor }}!" # 実行ユーザーの名前を取得
+
